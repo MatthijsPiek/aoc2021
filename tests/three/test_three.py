@@ -33,6 +33,13 @@ def most_common_character(column: Dict[str, int]) -> str:
     return character
 
 
+def least_common_character(column: Dict[str, int]) -> str:
+    # Get the character with the lowest count
+    character, count = min(column.items(), key=lambda x: x[1])
+    # Return the character
+    return character
+
+
 def most_common_characters(input: str):
     char_count_per_column = count_characters_per_column(input)
     
@@ -42,8 +49,18 @@ def most_common_characters(input: str):
         
     return output
 
+def least_common_characters(input: str):
+    char_count_per_column = count_characters_per_column(input)
+    
+    output = ""
+    for column in char_count_per_column:
+        output += least_common_character(column)
+        
+    return output
 
-def test_most_common_characters_example_part_one():
+
+
+def test_example_part_one():
     input = \
         """00100
 11110
@@ -59,3 +76,4 @@ def test_most_common_characters_example_part_one():
 01010
 """
     assert most_common_characters(input) == '10110'
+    assert least_common_characters(input) == '01001'
