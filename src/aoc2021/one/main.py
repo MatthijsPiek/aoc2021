@@ -4,6 +4,8 @@ from increases import count_increases
 with open('src/aoc2021/one/input', 'r') as f:
     data = f.read()
     
-    increases = count_increases(data)
     
-    print(f"Increases: {increases}")
+    print(f"Increases: {count_increases(data)}")
+    print(f"Increases window 3: {count_increases(data, 3)}")
+    
+    
