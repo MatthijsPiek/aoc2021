@@ -49,6 +49,6 @@ def test_sum_windows():
             260,
             263
         ]
-    sum = sum_window(input, 3, window=3)
+    sum = sum_window(input, 0, window=3)
 
     assert sum == 607
