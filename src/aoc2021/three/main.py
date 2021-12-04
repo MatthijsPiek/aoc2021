@@ -2,8 +2,8 @@ from typing import List
 from aoc2021.three.count_per_column import CountPerColumn
 
 
-def binary_str_to_int(input: str) -> int:
-    return int(input, 2)
+def binary_str_to_int(string: str) -> int:
+    return int(string, 2)
 
 
 def number_of_columns(line: str) -> int:
@@ -38,8 +38,8 @@ def calc_co2_scrubber_rating(lines: List[str]) -> str:
     return output
 
 
-def part_one(data: str):
-    count = CountPerColumn(data.splitlines())
+def part_one(text: str):
+    count = CountPerColumn(text.splitlines())
 
     gamma_rate = binary_str_to_int(count.most_common_characters())
     epsilon_rate = binary_str_to_int(count.least_common_characters())
@@ -47,8 +47,8 @@ def part_one(data: str):
     print(f"Answer part one: {gamma_rate * epsilon_rate}")
 
 
-def part_two(data: str):
-    lines = data.splitlines()
+def part_two(text: str):
+    lines = text.splitlines()
 
     oxygen_generator_rating = binary_str_to_int(calc_oxygen_generator_rating(lines))
     co2_scrubber_rating = binary_str_to_int(calc_co2_scrubber_rating(lines))
@@ -57,7 +57,7 @@ def part_two(data: str):
 
 
 if __name__ == "__main__":
-    with open('src/aoc2021/three/input', 'r') as f:
+    with open('src/aoc2021/three/input', 'r', encoding="utf-8") as f:
         data = f.read()
 
     part_one(data)
