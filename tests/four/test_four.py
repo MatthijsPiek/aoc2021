@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 
 class BingoCell:
@@ -16,8 +16,8 @@ class BingoCell:
 class BingoBoard:
     def __init__(self, board_as_text: str) -> None:
         lines = board_as_text.splitlines()
-        self.rows: List[List[BingoCell]] = [[]] * len(lines)
-        self.cols: List[List[BingoCell]] = [[]] * len(lines[0].split())
+        self.rows: List[List[BingoCell]] = [[] for _ in lines]
+        self.cols: List[List[BingoCell]] = [[] for _ in lines[0].split()]
         self.cells: Dict[int, BingoCell] = {}
         for (row_index, line) in enumerate(lines):
             for (col_index, cell_str) in enumerate(line.split()):
@@ -34,13 +34,17 @@ class BingoBoard:
     def has_won(self) -> bool:
         return any(map(all, self.rows)) or any(map(all, self.cols))
 
+    def sum_unmarked_cells(self) -> int:
+        return sum(cell.value for cell in self.cells.values() if not cell.marked)
+
 
 class BingoGame:
     def __init__(self, text: str) -> None:
         lines = text.splitlines()
-        self.calls = text.splitlines()[0].split(",")
+        self.calls = lines[0].split(",")
         self.boards: List[BingoBoard] = []
         self.winners: List[BingoBoard] = []
+        self.last_call: Optional[int] = None
         board_lines = []
         for line_index in range(2, len(lines)):
             if lines[line_index].strip() != "":
@@ -52,6 +56,7 @@ class BingoGame:
 
     def play_until_win(self) -> None:
         for call in self.calls:
+            self.last_call = int(call)
             for board in self.boards:
                 board.mark(int(call))
                 if board.has_won():
@@ -97,9 +102,32 @@ def test_one_cell_bingo_board_won():
     board.mark(1)
     assert board.has_won()
 
+def test_two_by_two_board():
+    board = BingoBoard("1 2\n3 4\n")
+
+    assert len(board.cols[0]) == 2
+    assert len(board.cols) == 2
+    assert len(board.rows[0]) == 2
+    assert len(board.rows) == 2
+    assert len(board.cells) == 4
+
 
 def test_split_example_input():
     bingo = BingoGame(EXAMPLE_INPUT)
 
     assert len(bingo.boards) == 3
     assert len(bingo.calls) == 27
+    assert len(bingo.boards[2].cells) == 25
+    assert len(bingo.boards[2].rows) == 5
+    assert len(bingo.boards[2].rows[0]) == 5
+    assert len(bingo.boards[2].cols) == 5
+    assert len(bingo.boards[2].cols[0]) == 5
+
+
+def test_full_example_part_one():
+    bingo = BingoGame(EXAMPLE_INPUT)
+    bingo.play_until_win()
+
+    assert bingo.winners[0].sum_unmarked_cells() == 188
+    assert bingo.last_call == 24
+    
