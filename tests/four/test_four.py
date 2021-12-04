@@ -69,3 +69,11 @@ def test_full_example_part_one():
 
     assert bingo.winners[0].sum_unmarked_cells() == 188
     assert bingo.last_call == 24
+
+
+def test_full_example_part_two():
+    bingo = BingoGame(EXAMPLE_INPUT)
+    bingo.play_until_last_win()
+
+    assert bingo.last_call == 13
+    assert bingo.winners[-1].sum_unmarked_cells() == 148

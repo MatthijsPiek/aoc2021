@@ -18,11 +18,16 @@ class BingoGame:
                     self.boards.append(BingoBoard("\n".join(board_lines)))
                     board_lines = []
 
-    def play_until_win(self) -> None:
+    def play_until_win(self, min_winners=1) -> None:
         for call in self.calls:
             self.last_call = int(call)
             for board in self.boards:
                 board.mark(int(call))
                 if board.has_won():
-                    self.winners.append(board)
-                    return
+                    if board not in self.winners:
+                        self.winners.append(board)
+                    if len(self.winners) >= min_winners:
+                        return
+
+    def play_until_last_win(self) -> None:
+        self.play_until_win(min_winners=len(self.boards))
