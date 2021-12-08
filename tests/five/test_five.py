@@ -1,73 +1,4 @@
-from typing import List
-
-
-class Coord:
-    @classmethod
-    def from_str(cls, coord_str: str):
-        return cls(*map(int, coord_str.split(',')))
-
-    def __init__(self, coord_x: int, coord_y: int) -> None:
-        self.x = coord_x  # pylint: disable=invalid-name
-        self.y = coord_y  # pylint: disable=invalid-name
-
-
-class LineSegment:
-    def __init__(self, segment_str: str) -> None:
-        coord_a, coord_b = \
-            map(
-                Coord.from_str,
-                segment_str.split(' -> '))
-
-        self.a, self.b = coord_a, coord_b  # pylint: disable=invalid-name
-
-    def is_vertical(self) -> bool:
-        return self.a.x == self.b.x
-
-    def is_horizontal(self) -> bool:
-        return self.a.y == self.b.y
-
-    def covered_points(self) -> List[Coord]:
-        if self.is_vertical():
-            return \
-                [Coord(self.a.x, y)\
-                    for y in range(min(self.a.y, self.b.y), max(self.a.y, self.b.y) + 1)]
-        elif self.is_horizontal():
-            return \
-                [Coord(x, self.a.y)\
-                    for x in range(min(self.a.x, self.b.x), max(self.a.x, self.b.x) + 1)]
-        else:
-            raise ValueError('Line segment is not vertical or horizontal')
-
-
-class VentMap:
-    def __init__(self, input_string) -> None:
-        self.input_string = input_string
-        self.map: List[List[int]] = [[]]
-        self.build_map()
-
-    def build_map(self) -> None:
-        for line in self.input_string.splitlines():
-            segment = LineSegment(line)
-
-            if (not segment.is_horizontal() and not segment.is_vertical()):
-                continue
-
-            for coord in segment.covered_points():
-                self.cover_point(coord)
-
-    def cover_point(self, coord: Coord) -> None:
-        if coord.x >= len(self.map):
-            self.map.extend([[0] * len(self.map[0])] *
-                            (coord.x - len(self.map) + 1))
-
-        if coord.y >= len(self.map[0]):
-            for row in self.map:
-                row.extend([0] * (coord.y - len(row) + 1))
-
-        self.map[coord.x][coord.y] += 1
-
-    def find_points_gte(self, threshold: int) -> int:
-        return sum(sum(1 for point in col if point >= threshold) for col in self.map)
+from aoc2021.five.vent_map import VentMap
 
 
 EXAMPLE_INPUT = \
@@ -88,3 +19,40 @@ def test_example_input_part_one():
     vent_map = VentMap(EXAMPLE_INPUT)
 
     assert vent_map.find_points_gte(2) == 5
+
+def test_simple_example():
+    vent_map = VentMap( \
+        """0,0 -> 1,0
+        1,0 -> 1,1
+        1,0 -> 2,0"""
+    )
+
+    assert vent_map.find_points_gte(2) == 1
+
+def test_counting_empty_map():
+    vent_map = VentMap("")
+
+    assert vent_map.find_points_gte(2) == 0
+    assert vent_map.find_points_gte(1) == 0
+    assert vent_map.find_points_gte(0) == 0
+
+def test_counting_single_line_single_cell():
+    vent_map = VentMap("0,0 -> 0,0")
+
+    assert vent_map.find_points_gte(1) == 1
+    assert vent_map.find_points_gte(2) == 0
+    assert vent_map.find_points_gte(0) == 1
+
+def test_counting_1000_by_1000_map():
+    vent_map = VentMap("0,0 -> 0,999\n0,999 -> 999,999")
+
+    assert vent_map.find_points_gte(1) == 1999
+    assert vent_map.find_points_gte(2) == 1
+    assert vent_map.find_points_gte(0) == 1_000_000
+
+def test_counting_999_by_1000_map():
+    vent_map = VentMap("0,0 -> 0,999\n0,999 -> 998,999")
+
+    assert vent_map.find_points_gte(1) == 1998
+    assert vent_map.find_points_gte(2) == 1
+    assert vent_map.find_points_gte(0) == 999_000
