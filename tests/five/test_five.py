@@ -20,11 +20,20 @@ def test_example_input_part_one():
 
     assert vent_map.find_points_gte(2) == 5
 
-def test_simple_example():
+def test_three_overlap():
     vent_map = VentMap( \
         """0,0 -> 1,0
         1,0 -> 1,1
         1,0 -> 2,0"""
+    )
+
+    assert vent_map.find_points_gte(2) == 1
+
+def test_three_overlap_swapped():
+    vent_map = VentMap( \
+        """0,0 -> 0,1
+        0,1 -> 1,1
+        0,1 -> 0,2"""
     )
 
     assert vent_map.find_points_gte(2) == 1
