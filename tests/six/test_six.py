@@ -42,4 +42,3 @@ def test_256_iterations():
     school.run_iterations(256)
 
     assert school.size() == 26_984_457_539
-
