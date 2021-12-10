@@ -52,6 +52,13 @@ def test_counting_single_line_single_cell():
     assert vent_map.find_points_gte(2) == 0
     assert vent_map.find_points_gte(0) == 1
 
+def test_counting_double_line_single_cell():
+    vent_map = VentMap("0,0 -> 0,0\n0,0 -> 0,0")
+
+    assert vent_map.find_points_gte(1) == 1
+    assert vent_map.find_points_gte(2) == 1
+    assert vent_map.find_points_gte(0) == 1
+
 def test_counting_1000_by_1000_map():
     vent_map = VentMap("0,0 -> 0,999\n0,999 -> 999,999")
 
@@ -65,3 +72,8 @@ def test_counting_999_by_1000_map():
     assert vent_map.find_points_gte(1) == 1998
     assert vent_map.find_points_gte(2) == 1
     assert vent_map.find_points_gte(0) == 999_000
+
+def test_aoc_2021_day_5_part_two_example_input():
+    vent_map = VentMap(EXAMPLE_INPUT, allow_diagonal=True)
+
+    assert vent_map.find_points_gte(2) == 12

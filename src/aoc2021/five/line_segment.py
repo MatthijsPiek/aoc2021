@@ -1,6 +1,12 @@
 from typing import List
 from aoc2021.five.coord import Coord
 
+def inclusive_range(start: int, end: int) -> range:
+    if start <= end:
+        return range(start, end + 1)
+    else:
+        return range(start, end - 1, -1)
+
 class LineSegment:
     def __init__(self, segment_str: str) -> None:
         coord_a, coord_b = \
@@ -20,10 +26,13 @@ class LineSegment:
         if self.is_vertical():
             return \
                 [Coord(self.a.x, y)\
-                    for y in range(min(self.a.y, self.b.y), max(self.a.y, self.b.y) + 1)]
+                    for y in inclusive_range(self.a.y, self.b.y)]
         elif self.is_horizontal():
             return \
                 [Coord(x, self.a.y)\
-                    for x in range(min(self.a.x, self.b.x), max(self.a.x, self.b.x) + 1)]
+                    for x in inclusive_range(self.a.x, self.b.x)]
         else:
-            raise ValueError('Line segment is not vertical or horizontal')
+            return \
+                [Coord(x, y)\
+                    for x, y in zip(inclusive_range(self.a.x, self.b.x),
+                                    inclusive_range(self.a.y, self.b.y))]
